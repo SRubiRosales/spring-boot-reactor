@@ -8,6 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 public class SpringBootReactorApplication implements CommandLineRunner {
 
@@ -18,7 +21,14 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Flux<String> nombres = Flux.just("Sharon Rosales", "Ruby Sparks", "Maria Fulana", "Andrea Mengana", "Bruce Willis", "Bruce Lee");
+		List<String> listaUsuarios = new ArrayList<>();
+		listaUsuarios.add("Sharon Rosales");
+		listaUsuarios.add("Ruby Spark");
+		listaUsuarios.add("Maria Fulana");
+		listaUsuarios.add("Andrea Mengana");
+		listaUsuarios.add("Bruce Willis");
+		listaUsuarios.add("Bruce Lee");
+		Flux<String> nombres = Flux.fromIterable(listaUsuarios);
 		Flux<Usuario> usuarios = nombres.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))// Method reference
 				.filter(usuario -> usuario.getNombre().toLowerCase().equals("bruce"))
 				.doOnNext(usuario -> {
