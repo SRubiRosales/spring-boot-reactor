@@ -1,6 +1,8 @@
 package com.srosales.springboot.reactor.app;
 
+import com.srosales.springboot.reactor.app.models.Comentarios;
 import com.srosales.springboot.reactor.app.models.Usuario;
+import com.srosales.springboot.reactor.app.models.UsuarioComentarios;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +24,21 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploCollectList();
+		ejemploUsuarioComentariosFlatMap();
+	}
+
+	public void ejemploUsuarioComentariosFlatMap() {
+		Mono<Usuario> usuarioMono = Mono.fromCallable(() ->  new Usuario("Jonh", "Doe"));
+		Mono<Comentarios> comentariosUsuario = Mono.fromCallable(() -> {
+			Comentarios comentarios = new Comentarios();
+			comentarios.addComentario("Hola mundo");
+			comentarios.addComentario("Hello world");
+			comentarios.addComentario("Good bye");
+			return comentarios;
+		});
+
+		usuarioMono.flatMap(u -> comentariosUsuario.map(c -> new UsuarioComentarios(u, c)))
+				.subscribe(uc -> log.info(uc.toString()));
 	}
 
 	public void ejemploCollectList() throws Exception {
