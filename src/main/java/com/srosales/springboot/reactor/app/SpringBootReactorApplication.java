@@ -24,7 +24,15 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploUsuarioComentariosZipWith2();
+		ejemploZipWithRange();
+	}
+
+	public void ejemploZipWithRange() {
+		Flux.just(1, 2, 3, 4)
+				.map(i -> (i*2))
+				.zipWith(Flux.range(0, 4), (uno, dos) ->
+						String.format("Primer Flux %d, Segundo Flux %d", uno, dos))
+				.subscribe(texto -> log.info(texto));
 	}
 
 	public void ejemploUsuarioComentariosZipWith() {
