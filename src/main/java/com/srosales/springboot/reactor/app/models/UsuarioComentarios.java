@@ -13,7 +13,7 @@ public class UsuarioComentarios {
     public String toString() {
         return "UsuarioComentarios{" +
                 "usuario=" + usuario +
-                ", comentarios=" + comentarios +
+                ", " + comentarios +
                 '}';
     }
 }

@@ -24,9 +24,41 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploUsuarioComentariosFlatMap();
+		ejemploUsuarioComentariosZipWith2();
 	}
 
+	public void ejemploUsuarioComentariosZipWith() {
+		Mono<Usuario> usuarioMono = Mono.fromCallable(() ->  new Usuario("Jonh", "Doe"));
+		Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
+			Comentarios comentarios = new Comentarios();
+			comentarios.addComentario("Hola mundo");
+			comentarios.addComentario("Hello world");
+			comentarios.addComentario("Good bye");
+			return comentarios;
+		});
+
+		Mono<UsuarioComentarios> usuarioConComentarios = usuarioMono.zipWith(comentariosUsuarioMono, (usuario, comentariosUsuario) ->
+						new UsuarioComentarios(usuario, comentariosUsuario));
+		usuarioConComentarios.subscribe(uc -> log.info(uc.toString()));
+	}
+	public void ejemploUsuarioComentariosZipWith2() {
+		Mono<Usuario> usuarioMono = Mono.fromCallable(() ->  new Usuario("Jonh", "Doe"));
+		Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
+			Comentarios comentarios = new Comentarios();
+			comentarios.addComentario("Hola mundo");
+			comentarios.addComentario("Hello world");
+			comentarios.addComentario("Good bye");
+			return comentarios;
+		});
+
+		Mono<UsuarioComentarios> usuarioConComentarios = usuarioMono.zipWith(comentariosUsuarioMono)
+				.map(tuple -> {
+					Usuario u = tuple.getT1();
+					Comentarios c = tuple.getT2();
+					return new UsuarioComentarios(u, c);
+				});
+		usuarioConComentarios.subscribe(uc -> log.info(uc.toString()));
+	}
 	public void ejemploUsuarioComentariosFlatMap() {
 		Mono<Usuario> usuarioMono = Mono.fromCallable(() ->  new Usuario("Jonh", "Doe"));
 		Mono<Comentarios> comentariosUsuario = Mono.fromCallable(() -> {
