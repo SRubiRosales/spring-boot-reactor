@@ -37,36 +37,8 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 	public void ejemploBackPressure() {
 		Flux.range(1, 10)
 				.log()
-				.subscribe(new Subscriber<Integer>() {
-					private Subscription s;
-					private Integer limite = 5;
-					private Integer consumido = 0;
-					@Override
-					public void onSubscribe(Subscription s) {
-						this.s = s;
-						s.request(limite);
-					}
-
-					@Override
-					public void onNext(Integer i) {
-						log.info(i.toString());
-						consumido++;
-						if (consumido == limite) {
-							consumido = 0;
-							s.request(limite);
-						}
-					}
-
-					@Override
-					public void onError(Throwable t) {
-
-					}
-
-					@Override
-					public void onComplete() {
-
-					}
-				});
+				.limitRate(3)
+				.subscribe();
 	}
 
 	public void ejemploIntervaloDesdeCreate() {
