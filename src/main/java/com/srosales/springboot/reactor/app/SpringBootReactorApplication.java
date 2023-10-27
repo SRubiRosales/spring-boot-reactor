@@ -3,6 +3,8 @@ package com.srosales.springboot.reactor.app;
 import com.srosales.springboot.reactor.app.models.Comentarios;
 import com.srosales.springboot.reactor.app.models.Usuario;
 import com.srosales.springboot.reactor.app.models.UsuarioComentarios;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +31,42 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploIntervaloDesdeCreate();
+		ejemploBackPressure();
+	}
+
+	public void ejemploBackPressure() {
+		Flux.range(1, 10)
+				.log()
+				.subscribe(new Subscriber<Integer>() {
+					private Subscription s;
+					private Integer limite = 5;
+					private Integer consumido = 0;
+					@Override
+					public void onSubscribe(Subscription s) {
+						this.s = s;
+						s.request(limite);
+					}
+
+					@Override
+					public void onNext(Integer i) {
+						log.info(i.toString());
+						consumido++;
+						if (consumido == limite) {
+							consumido = 0;
+							s.request(limite);
+						}
+					}
+
+					@Override
+					public void onError(Throwable t) {
+
+					}
+
+					@Override
+					public void onComplete() {
+
+					}
+				});
 	}
 
 	public void ejemploIntervaloDesdeCreate() {
